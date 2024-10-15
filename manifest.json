@@ -1,0 +1,13 @@
+{
+    "manifest_version": 3,
+    "name": "Knee Flexion Calculator",
+    "version": "1.0",
+    "description": "Calculate knee flexion angle from images",
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "permissions": [],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'"
+    }
+  }

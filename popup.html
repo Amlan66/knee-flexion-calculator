@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Knee Flexion Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Knee Flexion Calculator</h1>
+    
+    <input type="file" id="imageUpload" accept="image/*">
+    <button id="calculateBtn" disabled>Calculate Angle</button>
+    <button id="resetBtn" style="display: none;">Reset</button>
+    
+    <div id="canvasContainer" style="min-height: 50px;">
+        <canvas id="imageCanvas"></canvas>
+    </div>
+    <div id="result"></div>
+    <div id="instructions"></div>
+
+    <script src="utils/angleCalculator.js"></script>
+    <script src="utils/imageProcessor.js"></script>
+    <script src="popup.js"></script>
+</body>
+</html>
