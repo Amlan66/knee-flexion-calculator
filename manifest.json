@@ -6,8 +6,11 @@
     "action": {
       "default_popup": "popup.html"
     },
-    "permissions": [],
-    "content_security_policy": {
-      "extension_pages": "script-src 'self'; object-src 'self'"
-    }
+    "permissions": ["storage"],
+    "web_accessible_resources": [
+      {
+        "resources": ["lib/chart.js"],
+        "matches": ["<all_urls>"]
+      }
+    ]
   }

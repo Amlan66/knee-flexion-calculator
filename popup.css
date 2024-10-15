@@ -1,0 +1,48 @@
+body {
+    width: 400px;
+    padding: 10px;
+}
+
+#canvas {
+    max-width: 400px;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    border: 1px solid #000;
+    margin-top: 10px;
+}
+
+input, button {
+    margin: 5px 0;
+    display: block;
+}
+
+#flexionGraph {
+    margin-top: 20px;
+}
+
+button {
+    margin: 5px 0;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#eraseDataBtn {
+    background-color: #f44336;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.hidden-initially {
+    display: none;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

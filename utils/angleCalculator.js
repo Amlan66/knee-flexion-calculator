@@ -20,7 +20,8 @@ window.calculateKneeFlexionAngle = function(hip, knee, ankle) {
             throw new Error('Invalid angle calculation due to keypoint positions.');
         }
 
-        return angleDeg.toFixed(2);
+        const flexionAngle = 180 - angleDeg;
+        return flexionAngle.toFixed(2);
     } catch (error) {
         console.error('Error calculating knee flexion angle:', error);
         return 'Error';

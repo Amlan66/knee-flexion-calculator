@@ -4,22 +4,25 @@
     <meta charset="UTF-8">
     <title>Knee Flexion Calculator</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" type="text/css" href="popup.css">
 </head>
 <body>
     <h1>Knee Flexion Calculator</h1>
     
     <input type="file" id="imageUpload" accept="image/*">
-    <button id="calculateBtn" disabled>Calculate Angle</button>
-    <button id="resetBtn" style="display: none;">Reset</button>
-    
-    <div id="canvasContainer" style="min-height: 50px;">
-        <canvas id="imageCanvas"></canvas>
+    <div class="hidden-initially" id="analysisSection">
+        <input type="text" id="personName" placeholder="Person's Name" required>
+        <input type="date" id="dateTaken" required>
+        <canvas id="canvas" width="400" height="400"></canvas>
+        <div id="instructions">Click to mark 3 points: hip, knee, and ankle</div>
+        <button id="clearPointsBtn" style="display: none;">Clear Selected Points</button>
+        <button id="calculateBtn" disabled>Calculate Flexion</button>
+        <button id="resetBtn">Reset</button>
+        <button id="eraseDataBtn" style="display: none;">Erase Person's Data</button>
+        <div id="result"></div>
+        <canvas id="flexionGraph" width="400" height="200"></canvas>
     </div>
-    <div id="result"></div>
-    <div id="instructions"></div>
-
-    <script src="utils/angleCalculator.js"></script>
-    <script src="utils/imageProcessor.js"></script>
+    <script src="lib/chart.js"></script>
     <script src="popup.js"></script>
 </body>
 </html>
