@@ -1,6 +1,18 @@
 body {
     width: 400px;
     padding: 10px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #4CAF50;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 #canvas {
@@ -89,4 +101,73 @@ button:disabled {
     text-align: center;
     position: relative;
     z-index: 1000;
+}
+
+.input-group {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    margin-bottom: 15px;
+    margin-top: 30px; /* Add top margin to increase space from elements above */
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-field.name-field {
+    flex: 0.4;
+    margin-right: 40px; /* Keep the significant space between fields */
+}
+
+.input-field.date-field {
+    flex: 0.4; /* Reduced from 0.6 to 0.4 */
+    max-width: 150px; /* Add a max-width to limit the date field's size */
+}
+
+.input-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.input-field input[type="date"] {
+    padding: 7px 8px;
+}
+
+.input-field input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+/* If you want even more space, you can add a specific class for the name field */
+.input-field.name-field {
+    margin-right: 30px; /* This will create more space after the name field specifically */
+}
+
+/* Assuming your file input has an id of 'imageUpload' */
+#imageUpload {
+    margin-bottom: 30px; /* Increase this value to add more space */
+}
+
+/* Or if you're using a custom button for file upload */
+.file-upload-container {
+    margin-bottom: 30px; /* Increase this value to add more space */
+}
+
+#uploadInstruction {
+    margin-bottom: 10px;
+    color: #666;
+    font-style: italic;
 }

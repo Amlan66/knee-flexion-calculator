@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmEraseBtn = document.getElementById('confirmEraseBtn');
     const cancelEraseBtn = document.getElementById('cancelEraseBtn');
     const resultElement = document.getElementById('result');
+    const uploadInstruction = document.getElementById('uploadInstruction');
 
     // Set default date to today and max date to today
     const today = new Date().toISOString().split('T')[0];
@@ -48,10 +49,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update erase button text when person name changes
     personNameInput.addEventListener('input', updateEraseButtonText);
 
+    // Show instruction if no image is uploaded
+    if (!imageUpload.files.length) {
+        uploadInstruction.style.display = 'block';
+    }
+
     if (imageUpload) {
         imageUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
+                // Hide instruction when an image is uploaded
+                uploadInstruction.style.display = 'none';
+
                 const reader = new FileReader();
 
                 reader.onload = (event) => {
@@ -393,6 +402,9 @@ function resetAll() {
     // Show the instructions again
     document.getElementById('instructions').style.display = 'block';
     hideResult();
+
+    // Show upload instruction again when resetting
+    document.getElementById('uploadInstruction').style.display = 'block';
 }
 
 function updateEraseButtonText(personName) {

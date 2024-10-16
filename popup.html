@@ -9,10 +9,19 @@
 <body>
     <h1>Knee Flexion Calculator</h1>
     
+    <div id="uploadInstruction" style="display: none;">Please upload an image of knee flexion</div>
     <input type="file" id="imageUpload" accept="image/*">
     <div class="hidden-initially" id="analysisSection">
-        <input type="text" id="personName" placeholder="Person's Name" required>
-        <input type="date" id="dateTaken" required>
+        <div class="input-group">
+            <div class="input-field name-field">
+                <label for="personName">Person's Name:</label>
+                <input type="text" id="personName" placeholder="Enter name" required>
+            </div>
+            <div class="input-field date-field">
+                <label for="dateTaken">Date Taken:</label>
+                <input type="date" id="dateTaken" required>
+            </div>
+        </div>
         <canvas id="canvas" width="400" height="400"></canvas>
         <div id="result" style="display: none;"></div>
         <div id="instructions">Click to mark 3 points: hip, knee, and ankle</div>
