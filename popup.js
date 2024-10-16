@@ -31,6 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const personNameInput = document.getElementById('personName');
     const dateTakenInput = document.getElementById('dateTaken');
     const analysisSection = document.getElementById('analysisSection');
+    const eraseOptions = document.getElementById('eraseOptions');
+    const eraseAllBtn = document.getElementById('eraseAllBtn');
+    const eraseSpecificBtn = document.getElementById('eraseSpecificBtn');
+    const specificDateErase = document.getElementById('specificDateErase');
+    const dateSelect = document.getElementById('dateSelect');
+    const confirmEraseBtn = document.getElementById('confirmEraseBtn');
+    const cancelEraseBtn = document.getElementById('cancelEraseBtn');
+    const resultElement = document.getElementById('result');
 
     // Set default date to today and max date to today
     const today = new Date().toISOString().split('T')[0];
@@ -43,22 +51,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (imageUpload) {
         imageUpload.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            const reader = new FileReader();
+            if (file) {
+                const reader = new FileReader();
 
-            reader.onload = (event) => {
-                img = new Image();
-                img.onload = () => {
-                    // Scale down the image
-                    const scale = Math.min(400 / img.width, 400 / img.height);
-                    canvas.width = img.width * scale;
-                    canvas.height = img.height * scale;
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    analysisSection.style.display = 'block';
+                reader.onload = (event) => {
+                    img = new Image();
+                    img.onload = () => {
+                        // Scale down the image
+                        const scale = Math.min(400 / img.width, 400 / img.height);
+                        canvas.width = img.width * scale;
+                        canvas.height = img.height * scale;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        analysisSection.style.display = 'block';
+                    };
+                    img.src = event.target.result;
                 };
-                img.src = event.target.result;
-            };
 
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+            } else {
+                console.log('No file selected');
+            }
         });
     }
 
@@ -92,32 +104,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (calculateBtn) {
         calculateBtn.addEventListener('click', () => {
-            if (points.length !== 3) {
-                document.getElementById('result').textContent = 'Please select all three points before calculating.';
-                return;
-            }
-
             const angle = calculateAngle();
+            console.log("Calculated angle:", angle);
             if (angle !== null) {
                 const personName = personNameInput.value.trim();
                 const dateTaken = dateTakenInput.value;
                 
                 if (personName && dateTaken) {
                     saveFlexionAngle(personName, dateTaken, angle);
-                    document.getElementById('result').textContent = `Knee Flexion: ${angle}°`;
+                    showResult(`Knee Flexion: ${angle.toFixed(2)}°`);
                     updateGraph(personName);
                     
+                    // Lock the name input and update erase button
                     personNameInput.disabled = true;
                     updateEraseButtonText(personName);
                     eraseDataBtn.style.display = 'inline-block';
                     calculateBtn.disabled = true;
                     clearPointsBtn.style.display = 'none';
+                    
+                    // Hide the instructions
+                    document.getElementById('instructions').style.display = 'none';
                 } else {
-                    document.getElementById('result').textContent = 'Please enter person name and date.';
+                    showResult('Please enter person name and date.');
                 }
             } else {
-                document.getElementById('result').textContent = 'Error calculating flexion. Please try again.';
+                showResult('Error calculating flexion. Please try again.');
             }
+            // Add this line:
+            document.getElementById('result').style.zIndex = '9999';
         });
     }
 
@@ -129,25 +143,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (eraseDataBtn) {
         eraseDataBtn.addEventListener('click', () => {
+            eraseOptions.style.display = 'block';
+            eraseDataBtn.style.display = 'none';
+        });
+    }
+
+    if (eraseAllBtn) {
+        eraseAllBtn.addEventListener('click', () => {
             const personName = personNameInput.value.trim();
             if (personName) {
-                erasePersonData(personName);
-                document.getElementById('result').textContent = `Data for ${personName} has been erased.`;
-                // Clear the graph
-                const ctx = document.getElementById('flexionGraph').getContext('2d');
-                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-                if (flexionChart) {
-                    flexionChart.destroy();
-                    flexionChart = null;
-                }
-                resetAll();
-            } else {
-                document.getElementById('result').textContent = 'Please enter a person name to erase data.';
+                eraseAllPersonData(personName);
+                document.getElementById('result').textContent = `All data for ${personName} has been erased.`;
+                eraseDataBtn.style.display = 'none'; // Hide the erase data button
+                eraseOptions.style.display = 'none'; // Hide the erase options
+                
+                // Update the graph to show no data points
+                updateEmptyGraph(personName);
+
+                // Disable the name input
+                personNameInput.disabled = true;
             }
         });
     }
 
+    if (eraseSpecificBtn) {
+        eraseSpecificBtn.addEventListener('click', () => {
+            const personName = personNameInput.value.trim();
+            if (personName) {
+                const dates = getPersonDates(personName);
+                if (dates.length > 0) {
+                    populateDateSelect(dates);
+                    specificDateErase.style.display = 'block';
+                    eraseOptions.style.display = 'none';
+                } else {
+                    // If no dates left, hide erase options and button
+                    eraseOptions.style.display = 'none';
+                    eraseDataBtn.style.display = 'none';
+                    document.getElementById('result').textContent = `No data left for ${personName}.`;
+                }
+            }
+        });
+    }
+
+    if (confirmEraseBtn) {
+        confirmEraseBtn.addEventListener('click', () => {
+            const personName = personNameInput.value.trim();
+            const selectedDate = dateSelect.value;
+            if (personName && selectedDate) {
+                eraseSpecificDate(personName, selectedDate);
+                updateGraph(personName);
+                specificDateErase.style.display = 'none';
+                
+                // Check if there's any data left for the person
+                const remainingDates = getPersonDates(personName);
+                if (remainingDates.length > 0) {
+                    eraseDataBtn.style.display = 'inline-block';
+                    document.getElementById('result').textContent = `Data for ${personName} on ${selectedDate} has been erased.`;
+                } else {
+                    eraseDataBtn.style.display = 'none';
+                    document.getElementById('result').textContent = `All data for ${personName} has been erased.`;
+                }
+            }
+        });
+    }
+
+    if (cancelEraseBtn) {
+        cancelEraseBtn.addEventListener('click', () => {
+            specificDateErase.style.display = 'none';
+            eraseDataBtn.style.display = 'inline-block';
+        });
+    }
+
     checkElementVisibility();
+    hideResult();
 });
 
 function drawPoint(x, y) {
@@ -281,6 +349,12 @@ function updateGraph(personName) {
             }
         }
     });
+
+    // After updating the graph, check if there's any data left
+    const remainingDates = getPersonDates(personName);
+    if (remainingDates.length === 0) {
+        document.getElementById('eraseDataBtn').style.display = 'none';
+    }
 }
 
 function erasePersonData(personName) {
@@ -315,6 +389,10 @@ function resetAll() {
     document.getElementById('calculateBtn').disabled = true;
     document.getElementById('clearPointsBtn').style.display = 'none';
     document.getElementById('analysisSection').style.display = 'none';
+
+    // Show the instructions again
+    document.getElementById('instructions').style.display = 'block';
+    hideResult();
 }
 
 function updateEraseButtonText(personName) {
@@ -335,6 +413,115 @@ function clearPoints() {
     }
     document.getElementById('calculateBtn').disabled = true;
     document.getElementById('clearPointsBtn').style.display = 'none';
+}
+
+function eraseAllPersonData(personName) {
+    let data = JSON.parse(localStorage.getItem('flexionAngles')) || {};
+    if (data[personName]) {
+        delete data[personName];
+        localStorage.setItem('flexionAngles', JSON.stringify(data));
+    }
+}
+
+function getPersonDates(personName) {
+    let data = JSON.parse(localStorage.getItem('flexionAngles')) || {};
+    if (data[personName]) {
+        return data[personName].map(entry => entry.date);
+    }
+    return [];
+}
+
+function populateDateSelect(dates) {
+    const dateSelect = document.getElementById('dateSelect');
+    dateSelect.innerHTML = '';
+    dates.forEach(date => {
+        const option = document.createElement('option');
+        option.value = date;
+        option.textContent = date;
+        dateSelect.appendChild(option);
+    });
+}
+
+function eraseSpecificDate(personName, date) {
+    let data = JSON.parse(localStorage.getItem('flexionAngles')) || {};
+    if (data[personName]) {
+        data[personName] = data[personName].filter(entry => entry.date !== date);
+        if (data[personName].length === 0) {
+            delete data[personName];
+        }
+        localStorage.setItem('flexionAngles', JSON.stringify(data));
+    }
+}
+
+function updateEmptyGraph(personName) {
+    const ctx = document.getElementById('flexionGraph').getContext('2d');
+    
+    // Destroy the existing chart if it exists
+    if (flexionChart) {
+        flexionChart.destroy();
+    }
+
+    // Create a new empty chart
+    flexionChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Knee Flexion Angle',
+                data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        displayFormats: {
+                            day: 'MMM D'
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Flexion Angle (degrees)'
+                    },
+                    min: 0,
+                    max: 180
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: `Knee Flexion Angles for ${personName}`,
+                    font: {
+                        size: 16
+                    }
+                }
+            }
+        }
+    });
+}
+
+function showResult(text) {
+    const resultElement = document.getElementById('result');
+    resultElement.textContent = text;
+    resultElement.style.display = 'block';
+    console.log("Showing result:", text);
+}
+
+function hideResult() {
+    const resultElement = document.getElementById('result');
+    resultElement.style.display = 'none';
+    resultElement.textContent = '';
 }
 
 console.log('popup.js finished executing');

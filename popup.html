@@ -14,12 +14,25 @@
         <input type="text" id="personName" placeholder="Person's Name" required>
         <input type="date" id="dateTaken" required>
         <canvas id="canvas" width="400" height="400"></canvas>
+        <div id="result" style="display: none;"></div>
         <div id="instructions">Click to mark 3 points: hip, knee, and ankle</div>
         <button id="clearPointsBtn" style="display: none;">Clear Selected Points</button>
         <button id="calculateBtn" disabled>Calculate Flexion</button>
         <button id="resetBtn">Reset</button>
         <button id="eraseDataBtn" style="display: none;">Erase Person's Data</button>
-        <div id="result"></div>
+        <div id="eraseOptions" style="display: none;">
+            <button id="eraseAllBtn">Erase All Data</button>
+            <button id="eraseSpecificBtn">Erase Specific Date</button>
+        </div>
+        <div id="specificDateErase" style="display: none;">
+            <select id="dateSelect"></select>
+            <button id="confirmEraseBtn">Confirm Erase</button>
+            <button id="cancelEraseBtn">Cancel</button>
+        </div>
+        <div id="resultContainer" style="display: none;">
+            <h2>Result</h2>
+            <div id="result"></div>
+        </div>
         <canvas id="flexionGraph" width="400" height="200"></canvas>
     </div>
     <script src="lib/chart.js"></script>
